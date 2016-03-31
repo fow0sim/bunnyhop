@@ -1,0 +1,16 @@
+window
+to lineofeggs :cnt
+  repeat cnt [egg hop 10 ]
+  backhop 10
+end
+lineofeggs 7
+hop 20
+lineofeggs 6
+hop 30
+right 90
+lineofeggs 5
+right 180
+hop 40
+right 90
+hop 20
+lineofeggs 7

@@ -1,25 +1,23 @@
 package eu.simmig.turtle;
 
-public class Turtle {
-    public static final int DIRECTION_N = 0;
-    public static final int DIRECTION_E = 1;
-    public static final int DIRECTION_S = 2;
-    public static final int DIRECTION_W = 3;
+import java.util.SortedSet;
+import java.util.TreeSet;
 
-    int direction;
-    boolean isWriteMode;
-    int x;
-    int y;
+public class Turtle {
+    private static final int PRECISION = 8;
+
+    private int direction;
+    private Location location;
+    private SortedSet<Location> points;
 
     public Turtle() {
         init();
     }
 
     public void init() {
-        setDirection(DIRECTION_N);
-        setWriteMode(false);
-        x = 0;
-        y = 0;
+        setDirection(Location.DIRECTION_N);
+        location = new Location(0, 0);
+        points = new TreeSet<Location>();
     }
 
     public int getDirection() {
@@ -30,52 +28,97 @@ public class Turtle {
         this.direction = direction;
     }
 
-    public boolean isWriteMode() {
-        return isWriteMode;
-    }
-
-    public void setWriteMode(boolean writeMode) {
-        isWriteMode = writeMode;
-    }
-
     public void turnLeft() {
-        turn(-1);
+        turn(-(PRECISION / 4));
     }
 
     public void turnRight() {
-        turn(1);
+        turn(PRECISION / 4);
     }
 
     public void turnAround() {
-        turn(2);
+        turn(PRECISION / 2);
     }
 
     public void turn(int angle) {
-        int a = angle % 4;
-        setDirection((getDirection() + 4 + (angle % 4)) % 4);
+        int a = angle % PRECISION;
+        setDirection((getDirection() + PRECISION + (angle % PRECISION)) % PRECISION);
     }
 
     public void walk() {
-        switch (getDirection()) {
-            case DIRECTION_N:
-                y -= 1;
-                break;
-            case DIRECTION_E:
-                x += 1;
-                break;
-            case DIRECTION_S:
-                y += 1;
-                break;
-            case DIRECTION_W:
-                x -= 1;
-                break;
-        }
+        location = location.adjacentLocation(getDirection());
     }
 
     public void walk(int steps) {
         for (int i = 0; i < steps; i += 1) {
             walk();
         }
+    }
+
+    public void stepBack() {
+        turnAround();
+        walk();
+        turnAround();
+    }
+
+    public void paint() {
+        points.add(location);
+    }
+
+    public void draw(int steps) {
+        for (int i = 0; i < steps; i += 1) {
+            walk();
+            paint();
+        }
+    }
+
+    public Location relativeZero() {
+        if (points.isEmpty()) {
+            return new Location(0, 0);
+        }
+        int minX = 0;
+        int minY = 0;
+        for (Location point : points) {
+            minX = Math.min(minX, point.getX());
+            minY = Math.min(minY, point.getY());
+        }
+        return new Location(minX, minY);
+    }
+
+    public Location relativeMax() {
+        if (points.isEmpty()) {
+            return new Location(0, 0);
+        }
+        int maxX = 0;
+        int maxY = 0;
+        for (Location point : points) {
+            maxX = Math.max(maxX, point.getX());
+            maxY = Math.max(maxY, point.getY());
+        }
+        return new Location(maxX, maxY);
+    }
+
+    public Dimension getDimension() {
+        if (points.isEmpty()) {
+            return new Dimension(0, 0);
+        }
+        Location min = relativeZero();
+        Location max = relativeMax();
+        return new Dimension(max.getX() - min.getX() + 1, max.getY() - min.getY() + 1);
+    }
+
+    public int[][] toArray() {
+        Location min = relativeZero();
+        Location max = relativeMax();
+        int width = max.getX() - min.getX() + 1;
+        int height = max.getY() - min.getY() + 1;
+        int[][] result = new int[height][width];
+        for (Location point : points) {
+            int x = point.getX() - min.getX();
+            int y = point.getY() - min.getY();
+            result[y][x] = 1;
+        }
+        return result;
     }
 
 }
