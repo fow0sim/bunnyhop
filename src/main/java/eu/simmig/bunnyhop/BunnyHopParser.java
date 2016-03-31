@@ -52,7 +52,7 @@ public class BunnyHopParser {
         for (int i = 0; i < array.length; i += 1) {
             str = "";
             for (int j = 0; j < array[0].length; j += 1) {
-                str += (array[i][j] == 1) ? "*" : " ";
+                str += (array[i][j] == 1) ? "\u2588\u2588" : "  ";
             }
             System.out.println(str);
         }
