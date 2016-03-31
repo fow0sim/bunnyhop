@@ -77,8 +77,7 @@ public class BunnyHopParser {
 
     private void lineOfEggs(int steps) {
         turtle.paint();
-        turtle.draw(steps);
-        turtle.stepBack();
+        turtle.draw(steps - 1);
     }
 
 }
