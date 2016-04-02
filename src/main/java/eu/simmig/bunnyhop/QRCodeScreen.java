@@ -17,8 +17,8 @@ public class QRCodeScreen extends JPanel implements ComponentListener {
         super.paintComponent(g);
         int width = getWidth();
         int height = getHeight();
-        int scale = (width - 2) / qrCode[0].length;
-        scale = Math.min(scale, (height - 2) / qrCode.length);
+        int scale = ((width - 2) / qrCode[0].length) - 2;
+        scale = Math.min(scale, ((height - 2) / qrCode.length) - 2);
         g.setColor(Color.WHITE);
         g.fillRect(0, 0, width, height);
         g.setColor(Color.BLACK);
